@@ -172,7 +172,10 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         conf.setValue('identifier', self._config['identifier'])
         for l in FEMURLANDMARKS:
             conf.setValue(l, self._config[l])
-        conf.setValue('GUI', self._config['GUI'])
+        if self._config['GUI']:
+            conf.setValue('GUI', 'True')
+        else:
+            conf.setValue('GUI', 'False')
         conf.endGroup()
 
     def deserialize(self, location):
@@ -188,7 +191,11 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         self._config['identifier'] = conf.value('identifier', '')
         for l in FEMURLANDMARKS:
             self._config[l] = conf.value(l, l)
-        self._config['GUI'] = conf.value('GUI', True)
+        if conf.value('GUI')=='True':
+            self._config['GUI'] = True
+        elif conf.value('GUI')=='False':
+            self._config['GUI'] = False
+        # self._config['GUI'] = conf.value('GUI', True)
         conf.endGroup()
 
         d = ConfigureDialog()
