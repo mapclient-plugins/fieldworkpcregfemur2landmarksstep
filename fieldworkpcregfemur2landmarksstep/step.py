@@ -69,12 +69,12 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         Make sure you call the _doneExecution() method when finished.  This method
         may be connected up to a button in a widget for example.
         '''
-
+        self._inputModel.set_field_parameters(self._pc.getMean().reshape((3,-1,1)))
         if self._config['GUI']:
             print 'launching registration gui'
-            model = copy.deepcopy(self._inputModel)
+            # model = copy.deepcopy(self._inputModel)
             self._widget = MayaviPCRegViewerWidget(self._landmarks,
-                                                   model,
+                                                   self._inputModel,
 										           self._config,
 										           self.reg,
 										          )
@@ -89,12 +89,12 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
     def _abort(self):
 		raise RuntimeError('Femur Landmark Registration Aborted')
 
-    def reg(self):
+    def reg(self, callback=None):
         inputLandmarks = [(l, self._landmarks[self._config[l]]) for l in FEMURLANDMARKS if self._config[l]!='none']
         
         self._outputModel,\
         alignmentSSE,\
-        T = ma.alignFemurLandmarksPC(self._inputModel, self._pc, inputLandmarks)
+        T = ma.alignFemurLandmarksPC(self._inputModel, self._pc, inputLandmarks, GFParamsCallback=callback)
 
         self._rmse = np.sqrt(alignmentSSE[2]/len(inputLandmarks))
         self._transform = transformations.RigidPCModesTransform(T)

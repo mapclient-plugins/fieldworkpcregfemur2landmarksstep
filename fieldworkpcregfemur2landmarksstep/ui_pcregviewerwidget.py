@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'pcregviewerwidget.ui'
 #
-# Created: Sat May 31 23:33:04 2014
+# Created: Sun Jun  1 11:03:49 2014
 #      by: pyside-uic 0.2.14 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -115,9 +115,11 @@ class Ui_Dialog(object):
         self.label_3.setObjectName("label_3")
         self.formLayout_3.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_3)
         self.lineEditTransformation = QtGui.QLineEdit(self.groupBox)
+        self.lineEditTransformation.setReadOnly(True)
         self.lineEditTransformation.setObjectName("lineEditTransformation")
         self.formLayout_3.setWidget(1, QtGui.QFormLayout.FieldRole, self.lineEditTransformation)
         self.lineEditRMSE = QtGui.QLineEdit(self.groupBox)
+        self.lineEditRMSE.setReadOnly(True)
         self.lineEditRMSE.setObjectName("lineEditRMSE")
         self.formLayout_3.setWidget(0, QtGui.QFormLayout.FieldRole, self.lineEditRMSE)
         self.verticalLayout.addWidget(self.groupBox)

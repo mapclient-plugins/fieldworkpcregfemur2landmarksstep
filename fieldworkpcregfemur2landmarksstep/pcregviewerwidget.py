@@ -34,6 +34,7 @@ from mappluginutils.mayaviviewer import MayaviViewerObjectsContainer,\
                                         MayaviViewerFieldworkModel,\
                                         colours
 import numpy as np
+import copy
 
 class MayaviPCRegViewerWidget(QDialog):
     '''
@@ -61,7 +62,7 @@ class MayaviPCRegViewerWidget(QDialog):
         self._landmarks = landmarks
         self._landmarkNames = ['none',]
         self._landmarkNames = self._landmarkNames + sorted(self._landmarks.keys())
-        self._model = model
+        self._origModel = model
         self._regFunc = regFunc
         self._config = config
 
@@ -86,7 +87,7 @@ class MayaviPCRegViewerWidget(QDialog):
         self._objects = MayaviViewerObjectsContainer()
         self._objects.addObject('femur mesh',
                                 MayaviViewerFieldworkModel('femur mesh',
-                                                           self._model,
+                                                           copy.deepcopy(self._origModel),
                                                            self._modelDisc,
                                                            renderArgs=self._modelRenderArgs
                                                            )
@@ -156,7 +157,7 @@ class MayaviPCRegViewerWidget(QDialog):
             self._addObjectToTable(r, ln, self._objects.getObject(ln))
             r += 1
 
-        self._addObjectToTable(r, 'femur mesh', self._objects.getObject('femur mesh'), checked=False)
+        self._addObjectToTable(r, 'femur mesh', self._objects.getObject('femur mesh'), checked=True)
         self._modelRow = r
         self._ui.tableWidget.resizeColumnToContents(self.objectTableHeaderColumns['Visible'])
 
@@ -225,15 +226,19 @@ class MayaviPCRegViewerWidget(QDialog):
     def _updateConfigFGT(self):
         self._config['FGT'] = self._ui.comboBoxFGT.currentText()
 
+    def _updateMeshGeometry(self, P):
+        meshObj = self._objects.getObject('femur mesh')
+        meshObj.updateGeometry(P, self._scene)
+
     def _reg(self):
-        regModel, RMSE, T = self._regFunc()
+        regModel, RMSE, T = self._regFunc(callback=self._updateMeshGeometry)
 
         # update mesh
-        meshObj = self._objects.getObject('femur mesh')
-        meshObj.updateGeometry(regModel.get_field_parameters(), self._scene)
-        meshTableItem = self._ui.tableWidget.item(len(self._landmarkNames)-1,
-                                                  self.objectTableHeaderColumns['Visible'])
-        meshTableItem.setCheckState(Qt.Checked)
+        # meshObj = self._objects.getObject('femur mesh')
+        # meshObj.updateGeometry(regModel.get_field_parameters(), self._scene)
+        # meshTableItem = self._ui.tableWidget.item(len(self._landmarkNames)-1,
+        #                                           self.objectTableHeaderColumns['Visible'])
+        # meshTableItem.setCheckState(Qt.Checked)
 
         # update error field
         self._ui.lineEditRMSE.setText('{:12.10f}'.format(RMSE))
@@ -244,10 +249,10 @@ class MayaviPCRegViewerWidget(QDialog):
         # self._ui.tableWidget.removeRow(2)
         # reset mesh
         meshObj = self._objects.getObject('femur mesh')
-        meshObj.updateGeometry(self._model.get_field_paramters(), self._scene)
-        meshTableItem = self._ui.tableWidget.item(len(self._landmarkNames)-1,
-                                                  self.objectTableHeaderColumns['Visible'])
-        meshTableItem.setCheckState(Qt.Unchecked)
+        meshObj.updateGeometry(self._origModel.get_field_parameters(), self._scene)
+        # meshTableItem = self._ui.tableWidget.item(len(self._landmarkNames)-1,
+        #                                           self.objectTableHeaderColumns['Visible'])
+        # meshTableItem.setCheckState(Qt.Unchecked)
 
     def _accept(self):
         self._close()
