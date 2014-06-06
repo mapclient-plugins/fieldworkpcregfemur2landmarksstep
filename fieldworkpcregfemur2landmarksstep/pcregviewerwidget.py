@@ -228,7 +228,7 @@ class MayaviPCRegViewerWidget(QDialog):
 
     def _updateMeshGeometry(self, P):
         meshObj = self._objects.getObject('femur mesh')
-        meshObj.updateGeometry(P, self._scene)
+        meshObj.updateGeometry(P.reshape((3,-1,1)), self._scene)
 
     def _reg(self):
         regModel, RMSE, T = self._regFunc(callback=self._updateMeshGeometry)
