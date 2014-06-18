@@ -24,6 +24,7 @@ from PySide.QtGui import QDialog, QFileDialog, QDialogButtonBox,\
                          QAbstractItemView, QTableWidgetItem
 from PySide.QtGui import QDoubleValidator, QIntValidator
 from PySide.QtCore import Qt
+from PySide.QtCore import QThread, Signal
 
 from fieldworkpcregfemur2landmarksstep.ui_pcregviewerwidget import Ui_Dialog
 from traits.api import HasTraits, Instance, on_trait_change, \
@@ -35,6 +36,18 @@ from mappluginutils.mayaviviewer import MayaviViewerObjectsContainer,\
                                         colours
 import numpy as np
 import copy
+
+class _ExecThread(QThread):
+    finalUpdate = Signal(tuple)
+    update = Signal(tuple)
+
+    def __init__(self, func):
+        QThread.__init__(self)
+        self.func = func
+
+    def run(self):
+        output = self.func(self.update)
+        self.finalUpdate.emit(output)
 
 class MayaviPCRegViewerWidget(QDialog):
     '''
@@ -65,6 +78,10 @@ class MayaviPCRegViewerWidget(QDialog):
         self._origModel = model
         self._regFunc = regFunc
         self._config = config
+
+        self._worker = _ExecThread(self._regFunc)
+        self._worker.finalUpdate.connect(self._regUpdate)
+        self._worker.update.connect(self._updateMeshGeometry)
 
         # print 'init...', self._config
 
@@ -113,7 +130,10 @@ class MayaviPCRegViewerWidget(QDialog):
         self._ui.tableWidget.itemClicked.connect(self._tableItemClicked)
         self._ui.tableWidget.itemChanged.connect(self._visibleBoxChanged)
         self._ui.screenshotSaveButton.clicked.connect(self._saveScreenShot)
-        self._ui.regButton.clicked.connect(self._reg)
+        
+        self._ui.regButton.clicked.connect(self._worker.start)
+        self._ui.regButton.clicked.connect(self._regLockUI)
+
         self._ui.resetButton.clicked.connect(self._reset)
         self._ui.abortButton.clicked.connect(self._abort)
         self._ui.acceptButton.clicked.connect(self._accept)
@@ -230,19 +250,34 @@ class MayaviPCRegViewerWidget(QDialog):
         meshObj = self._objects.getObject('femur mesh')
         meshObj.updateGeometry(P.reshape((3,-1,1)), self._scene)
 
-    def _reg(self):
-        regModel, RMSE, T = self._regFunc(callback=self._updateMeshGeometry)
-
-        # update mesh
-        # meshObj = self._objects.getObject('femur mesh')
-        # meshObj.updateGeometry(regModel.get_field_parameters(), self._scene)
-        # meshTableItem = self._ui.tableWidget.item(len(self._landmarkNames)-1,
-        #                                           self.objectTableHeaderColumns['Visible'])
-        # meshTableItem.setCheckState(Qt.Checked)
-
+    def _regUpdate(self, output):
+        regModel, RMSE, T = output
         # update error field
         self._ui.lineEditRMSE.setText('{:12.10f}'.format(RMSE))
         self._ui.lineEditTransformation.setText(', '.join(['{:5.2f}'.format(t) for t in T]))
+
+        # unlock reg ui
+        self._regUnlockUI()
+
+    def _regLockUI(self):
+        self._ui.comboBoxFGT.setEnabled(False)
+        self._ui.comboBoxFHC.setEnabled(False)
+        self._ui.comboBoxLEC.setEnabled(False)
+        self._ui.comboBoxMEC.setEnabled(False)
+        self._ui.regButton.setEnabled(False)
+        self._ui.resetButton.setEnabled(False)
+        self._ui.acceptButton.setEnabled(False)
+        self._ui.abortButton.setEnabled(False)
+
+    def _regUnlockUI(self):
+        self._ui.comboBoxFGT.setEnabled(True)
+        self._ui.comboBoxFHC.setEnabled(True)
+        self._ui.comboBoxLEC.setEnabled(True)
+        self._ui.comboBoxMEC.setEnabled(True)
+        self._ui.regButton.setEnabled(True)
+        self._ui.resetButton.setEnabled(True)
+        self._ui.acceptButton.setEnabled(True)
+        self._ui.abortButton.setEnabled(True)
 
     def _reset(self):
         # delete viewer table row

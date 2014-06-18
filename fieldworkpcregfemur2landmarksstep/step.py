@@ -89,7 +89,14 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
     def _abort(self):
 		raise RuntimeError('Femur Landmark Registration Aborted')
 
-    def reg(self, callback=None):
+    def reg(self, callbackSignal=None):
+
+        if callbackSignal is not None:
+            def callback(output):
+                callbackSignal.emit(output)
+        else:
+            callback = None
+
         inputLandmarks = [(l, self._landmarks[self._config[l]]) for l in FEMURLANDMARKS if self._config[l]!='none']
         
         self._outputModel,\
