@@ -1,7 +1,7 @@
 
 
 from PySide import QtGui
-from fieldworkpcregfemur2landmarksstep.ui_configuredialog import Ui_Dialog
+from mapclientplugins.fieldworkpcregfemur2landmarksstep.ui_configuredialog import Ui_Dialog
 
 INVALID_STYLE_SHEET = 'background-color: rgba(239, 0, 0, 50)'
 DEFAULT_STYLE_SHEET = ''

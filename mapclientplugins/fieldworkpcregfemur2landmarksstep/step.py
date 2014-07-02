@@ -8,11 +8,12 @@ import copy
 from PySide import QtGui
 from PySide import QtCore
 
-from mountpoints.workflowstep import WorkflowStepMountPoint
-from fieldworkpcregfemur2landmarksstep.configuredialog import ConfigureDialog
-from fieldworkpcregfemur2landmarksstep.pcregviewerwidget import MayaviPCRegViewerWidget
+from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
+from mapclientplugins.fieldworkpcregfemur2landmarksstep.configuredialog import ConfigureDialog
+from mapclientplugins.fieldworkpcregfemur2landmarksstep.pcregviewerwidget import MayaviPCRegViewerWidget
 
 from workutils import mesh_alignment as ma
+from gias.common import math
 from mappluginutils.datatypes import transformations
 import numpy as np
 
@@ -89,6 +90,15 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
     def _abort(self):
 		raise RuntimeError('Femur Landmark Registration Aborted')
 
+    def _correctLandmarks(self):
+        shiftDistance = 10.0 # mm
+
+        # move epicondyle landmarks closer to each other
+        vec = self._landmarks[self._config['MEC']] - self._landmarks[self._config['LEC']]
+        vecn = math.norm(vec)
+        self._landmarks[self._config['MEC']] -= shiftDistance*vecn
+        self._landmarks[self._config['LEC']] += shiftDistance*vecn
+
     def reg(self, callbackSignal=None):
 
         if callbackSignal is not None:
@@ -115,6 +125,7 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         '''
         if index==0:
             self._landmarks = dataIn # ju#landmarks
+            self._correctLandmarks()
         elif index==1:
             self._pc = dataIn
         else:
