@@ -5,6 +5,9 @@ MAP Client Plugin Step
 import os
 import copy
 
+'''
+MAP Client Plugin Step
+'''
 from PySide import QtGui
 from PySide import QtCore
 
@@ -25,6 +28,10 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
     Skeleton step which is intended to be a helpful starting point
     for new steps.
     '''
+
+    _pcfitmw0 = 1e2
+    _pcfitmwn = 1e2
+    _landmarkShift = 10.0
 
     def __init__(self, location):
         super(FieldworkPCRegFemur2LandmarksStep, self).__init__('Fieldwork PC-Reg Femur 2 Landmarks', location)
@@ -92,13 +99,11 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
 		raise RuntimeError('Femur Landmark Registration Aborted')
 
     def _correctLandmarks(self):
-        shiftDistance = 10.0 # mm
-
         # move epicondyle landmarks closer to each other
         vec = self._landmarks[self._config['MEC']] - self._landmarks[self._config['LEC']]
         vecn = math.norm(vec)
-        self._landmarks[self._config['MEC']] -= shiftDistance*vecn
-        self._landmarks[self._config['LEC']] += shiftDistance*vecn
+        self._landmarks[self._config['MEC']] -= self._landmarkShift*vecn
+        self._landmarks[self._config['LEC']] += self._landmarkShift*vecn
 
     def reg(self, callbackSignal=None):
 
@@ -108,11 +113,17 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         else:
             callback = None
 
+        self._correctLandmarks()
         inputLandmarks = [(l, self._landmarks[self._config[l]]) for l in FEMURLANDMARKS if self._config[l]!='none']
         
         self._outputModel,\
         alignmentSSE,\
-        T = ma.alignFemurLandmarksPC(self._inputModel, self._pc, inputLandmarks, GFParamsCallback=callback)
+        T = ma.alignFemurLandmarksPC(self._inputModel,
+                                     self._pc,
+                                     inputLandmarks,
+                                     GFParamsCallback=callback,
+                                     mw0=self._pcfitmw0,
+                                     mwn=self._pcfitmwn)
 
         self._rmse = np.sqrt(alignmentSSE[2]/len(inputLandmarks))
         self._transform = transformations.RigidPCModesTransform(T)
@@ -126,7 +137,6 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         '''
         if index==0:
             self._landmarks = dataIn # ju#landmarks
-            self._correctLandmarks()
         elif index==1:
             self._pc = dataIn
         else:
