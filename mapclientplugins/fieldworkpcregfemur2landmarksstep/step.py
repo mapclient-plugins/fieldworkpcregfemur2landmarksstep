@@ -42,7 +42,7 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         # Ports:
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
-                      'ju#landmarks'))
+                      'python#dict'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#uses',
                       'ju#principalcomponents'))
@@ -54,10 +54,10 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
                       'ju#fieldworkmodel'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
-                      'http://physiomeproject.org/workflow/1.0/rdf-schema#geometrictransform'))
+                      'ju#geometrictransform'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
-                      'float'))
+                      'python#float'))
 
         self._config = {}
         self._config['identifier'] = ''
