@@ -54,7 +54,7 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
                       'ju#fieldworkmodel'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
-                      'ju#geometrictransform'))
+                      'http://physiomeproject.org/workflow/1.0/rdf-schema#geometrictransform'))
         self.addPort(('http://physiomeproject.org/workflow/1.0/rdf-schema#port',
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#provides',
                       'float'))
