@@ -19,5 +19,8 @@ This file is part of MAP Client. (http://launchpad.net/mapclient)
 """
 __version__ = '0.1.0'
 __author__ = 'Ju Zhang'
+__stepname__ = 'Fieldwork PC-Reg Femur 2 Landmarks'
+__location__ = 'https://github.com/mapclient-plugins/fieldworkpcregfemur2landmarksstep/archive/master.zip'
+
 from mapclientplugins.fieldworkpcregfemur2landmarksstep import step
 import mapclientplugins.fieldworkpcregfemur2landmarksstep.resources_rc

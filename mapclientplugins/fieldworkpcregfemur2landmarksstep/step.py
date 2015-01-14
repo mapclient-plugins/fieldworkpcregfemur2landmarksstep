@@ -80,13 +80,13 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         '''
         self._inputModel.set_field_parameters(self._pc.getMean().reshape((3,-1,1)))
         if self._config['GUI']:
-            print 'launching registration gui'
+            print('launching registration gui')
             # model = copy.deepcopy(self._inputModel)
             self._widget = MayaviPCRegViewerWidget(self._landmarks,
                                                    self._inputModel,
-										           self._config,
-										           self.reg,
-										          )
+                                                   self._config,
+                                                   self.reg,
+                                                  )
             self._widget._ui.acceptButton.clicked.connect(self._doneExecution)
             self._widget._ui.abortButton.clicked.connect(self._abort)
             self._widget.setModal(True)
@@ -96,7 +96,7 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
             self._doneExecution()
 
     def _abort(self):
-		raise RuntimeError('Femur Landmark Registration Aborted')
+        raise RuntimeError('Femur Landmark Registration Aborted')
 
     def _correctLandmarks(self):
         # move epicondyle landmarks closer to each other
