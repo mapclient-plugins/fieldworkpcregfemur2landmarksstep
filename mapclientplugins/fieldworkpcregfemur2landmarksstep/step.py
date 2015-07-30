@@ -36,7 +36,7 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
     def __init__(self, location):
         super(FieldworkPCRegFemur2LandmarksStep, self).__init__('Fieldwork PC-Reg Femur 2 Landmarks', location)
         self._configured = False # A step cannot be executed until it has been configured.
-        self._category = 'Anthropometry'
+        self._category = 'Registration'
         # Add any other initialisation code here:
         self._icon = QtGui.QImage(':/fieldworkpcregfemur2landmarksstep/images/fieldworkfemurpcregicon.png')
         # Ports:
