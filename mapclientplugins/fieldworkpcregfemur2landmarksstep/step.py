@@ -5,9 +5,6 @@ MAP Client Plugin Step
 import os
 import copy
 
-'''
-MAP Client Plugin Step
-'''
 from PySide import QtGui
 from PySide import QtCore
 
