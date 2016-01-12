@@ -3,10 +3,10 @@
 MAP Client Plugin Step
 '''
 import os
+import json
 import copy
 
 from PySide import QtGui
-from PySide import QtCore
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
 from mapclientplugins.fieldworkpcregfemur2landmarksstep.configuredialog import ConfigureDialog
