@@ -1,8 +1,7 @@
-fieldworkpcregfemur2landmarksstep
-=================================
+Fieldwork PC-Reg Femur 2 Landmarks Step
+=======================================
 MAP Client plugin for registering a Fieldwork femur mesh to landmarks using a GIAS PCA model.
 
-Requires:
-GIAS: https://bitbucket.org/jangle/gias,
-fieldwork: https://bitbucket.org/jangle/fieldwork,
-mappluginutils: https://bitbucket.org/jangle/mappluginutils
+Requires
+--------
+GIAS2: https://bitbucket.org/jangle/gias2
