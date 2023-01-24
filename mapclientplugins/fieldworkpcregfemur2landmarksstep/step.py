@@ -11,9 +11,9 @@ from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
 from mapclientplugins.fieldworkpcregfemur2landmarksstep.configuredialog import ConfigureDialog
 from mapclientplugins.fieldworkpcregfemur2landmarksstep.pcregviewerwidget import MayaviPCRegViewerWidget
 
-from gias2.musculoskeletal import model_alignment as ma
-from gias2.common import math
-from gias2.mappluginutils.datatypes import transformations
+from gias3.musculoskeletal import model_alignment as ma
+from gias3.common import math
+from gias3.mapclientpluginutilities.datatypes import transformations
 import numpy as np
 
 FEMURLANDMARKS = ('FHC', 'MEC', 'LEC', 'FGT')
@@ -117,7 +117,7 @@ class FieldworkPCRegFemur2LandmarksStep(WorkflowStepMountPoint):
         T = ma.alignFemurLandmarksPC(self._inputModel,
                                      self._pc,
                                      inputLandmarks,
-                                     GFParamsCallback=callback,
+                                     gf_params_callback=callback,
                                      mw0=self._pcfitmw0,
                                      mwn=self._pcfitmwn)
 
